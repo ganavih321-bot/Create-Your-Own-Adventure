@@ -81,30 +81,24 @@ def generate_story_task(job_id:str, theme:str, session_id:str):
         db.close()
 
 
-@router.get("/{story_id}/complete", response_model=CompleteStoryResponse)
-def get_complete_story(story_id:int, db: Session = Depends(get_db)):
-    story=db.query(Story).filter(Story.story_id==story_id).first()
-    if not story:
-        raise HTTPException(status_code=404, detail="Story not found")
-
-    return story
-
-
-class CompleteStoryNoderesponse:
-    pass
-
-
 def build_complete_story_tree(db:Session, story:Story)-> CompleteStoryResponse:
     nodes=db.query(StoryNode).filter(StoryNode.story_id==story.id).all()
     
     node_dict={}
     for node in nodes:
+        options_data = node.options
+        if isinstance(options_data, str):
+            import json
+            options_data = json.loads(options_data)
+        elif options_data is None:
+            options_data = []
+
         node_response=CompleteStoryNodeResponse(
             id=node.id,
             content=node.content,
             is_ending=node.is_ending,
             is_winning_ending=node.is_winning_ending,
-            options=node.options
+            options=options_data
         )
         node_dict[node.id]=node_response
 
@@ -120,3 +114,12 @@ def build_complete_story_tree(db:Session, story:Story)-> CompleteStoryResponse:
         root_node=node_dict[root_node.id],
         all_nodes=node_dict
     )
+
+
+@router.get("/{story_id}/complete", response_model=CompleteStoryResponse)
+def get_complete_story(story_id:int, db: Session = Depends(get_db)):
+    story=db.query(Story).filter(Story.id==story_id).first()
+    if not story:
+        raise HTTPException(status_code=404, detail="Story not found")
+
+    return build_complete_story_tree(db, story)

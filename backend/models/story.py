@@ -5,7 +5,6 @@ from sqlalchemy.orm import relationship
 from db.database import Base
 
 class Story(Base):
-    story_id = None
     __tablename__="stories"
 
     id=Column(Integer, primary_key=True, index=True)

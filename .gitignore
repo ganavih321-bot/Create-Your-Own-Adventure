@@ -2,3 +2,6 @@ backend/.env
 *.xml
 .idea
 *.pyc
+*.db
+__pycache__/
+.venv/

@@ -1,0 +1,7 @@
+- how to run frontend
+    - `cd frontend/`
+    - `npm run dev`
+- how to run backend
+    - `cd backend/`
+    - `.\.venv\Scripts\activate`
+    - `uvicorn main:app --reload --port 8000`

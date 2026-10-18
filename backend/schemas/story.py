@@ -13,7 +13,7 @@ class StoryNodeBase(BaseModel):
 
 class CompleteStoryNodeResponse(StoryNodeBase):
     id:int
-    optio0ns:List[StoryOptionsSchema]=[]
+    options:List[StoryOptionsSchema]=[]
 
     class Config:
         from_attributes=True
