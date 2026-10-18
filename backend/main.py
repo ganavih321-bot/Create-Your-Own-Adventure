@@ -15,10 +15,13 @@ app = FastAPI(
     redoc_url="/redoc",
 )
 
+# Support dynamic Vercel domains and handle wildcard vs credentials safely
+is_wildcard = "*" in settings.ALLOWED_ORIGINS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.ALLOWED_ORIGINS,
-    allow_credentials=True,
+    allow_origins=[] if is_wildcard else settings.ALLOWED_ORIGINS,
+    allow_origin_regex=r".*" if is_wildcard else r"https://.*\.vercel\.app",
+    allow_credentials=not is_wildcard,
     allow_methods=["*"],
     allow_headers=["*"],
 )
